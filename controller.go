@@ -1,15 +1,14 @@
 package main
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"net/http"
 	"os"
-	"os/exec"
 	"path/filepath"
-	"runtime"
 	"sort"
 	"strconv"
 	"strings"
@@ -94,28 +93,14 @@ func QuickLogin(c *gin.Context) {
 	c.JSON(http.StatusOK, util2.Success(util2.Attr.UserName))
 }
 
-func ToWeb(c *gin.Context) {
-	rawData, _ := c.GetRawData()
-	var tmp map[string]string
-	json.Unmarshal(rawData, &tmp)
-	var cmd *exec.Cmd
-
-	switch runtime.GOOS {
-	case "darwin": // macOS
-		cmd = exec.Command("open", tmp["webUrl"])
-	case "linux":
-		cmd = exec.Command("xdg-open", tmp["webUrl"])
-	case "windows":
-		cmd = exec.Command("cmd", "/c", "start", tmp["webUrl"])
-	default:
-		// Unsupported platform
-		return
-	}
-
-	err := cmd.Start()
+// DownLoadDoc 下载说明手册
+func DownLoadDoc(c *gin.Context) {
+	value, _ := c.GetRawData()
+	file, err := os.ReadFile(string(value))
 	if err != nil {
-		// Handle error
+		c.JSON(http.StatusOK, util2.FailWithMsg(util2.MANUAL_DOWNLOAD_FAILED.Status, util2.MANUAL_DOWNLOAD_FAILED.Message))
 	}
+	c.JSON(http.StatusOK, util2.Success(base64.StdEncoding.EncodeToString(file)))
 }
 
 // UploadFile 文件上传

@@ -12,6 +12,7 @@ func init() {
 	// 用户相关
 	router.POST("/auth/login", Login)
 	router.POST("/auth/quickLogin", QuickLogin)
+	router.POST("/auth/downLoadDoc", DownLoadDoc)
 	// 升级相关
 	router.POST("/upgrade/upload", UploadFile)
 	router.POST("/upgrade/unPack", UnPack)

@@ -55,6 +55,7 @@ var (
 	ReadBackupDirectoryError        = errorCode{90010023, "读取备份目录失败"}
 	FileNameHashError               = errorCode{90010024, "升级文件名称需要包含验证字段"}
 	FileIntegrityVerificationError  = errorCode{90010025, "升级包完整性验证失败"}
+	MANUAL_DOWNLOAD_FAILED          = errorCode{90010026, "下载使用手册失败"}
 )
 
 const (
