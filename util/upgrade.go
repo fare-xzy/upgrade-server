@@ -43,6 +43,7 @@ type FileDetails struct {
 type UpdateResult struct {
 	DateStr    string
 	FolderName string
+	Desc       string
 }
 
 var (

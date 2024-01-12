@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"io"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"sort"
 	"strconv"
@@ -298,11 +300,19 @@ func QueryHistory(c *gin.Context) {
 			dateStr := folderName[16:]
 			dateTime, _ := time.Parse("20060102150405", dateStr)
 			dateFormat := dateTime.Format("2006-01-02 15:04:05")
+			var desc []byte
+			descPath := path.Join(homePath, file.Name(), "desc.txt")
+			descFile, err := util2.GetRemoteFile(descPath)
+			if err == nil {
+				desc, _ = io.ReadAll(descFile)
+			}
 			updateResult = util2.UpdateResult{
 				DateStr:    dateFormat,
 				FolderName: folderName,
+				Desc:       string(desc),
 			}
 			util2.URs = append(util2.URs, updateResult)
+
 		}
 	}
 	sort.Slice(util2.URs, func(i, j int) bool {
