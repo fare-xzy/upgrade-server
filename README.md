@@ -8,6 +8,8 @@
 > go get -u github.com/gin-gonic/gin（轻量级web框架，github地址：https://github.com/gin-gonic/gin）
 >
 > go get -u github.com/rs/zerolog
+> 
+> go env -w GOPROXY=https://goproxy.cn,direct
 
 ### 打包
 
