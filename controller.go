@@ -446,6 +446,8 @@ func DrawerRollBack(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, util2.Success("OK"))
 }
+
+// GetProgress 获取上传进度
 func GetProgress(c *gin.Context) {
 	c.JSON(http.StatusOK, util2.ProgressW)
 	return
