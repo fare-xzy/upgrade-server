@@ -25,7 +25,7 @@ func Login(c *gin.Context) {
 	err := c.BindJSON(&util2.Attr)
 	if err != nil {
 		inLog.Errorf("登录信息解析异常 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.LoginInformationConversionError.Status, util2.LoginInformationConversionError.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.LoginInformationConversionError.Status, util2.LoginInformationConversionError.Message, err.Error()))
 		return
 	}
 	if util2.SShClient != nil {
@@ -34,14 +34,14 @@ func Login(c *gin.Context) {
 	err = util2.NetworkTest()
 	if err != nil {
 		inLog.Errorf("网络连通性检测失败 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.NetworkConnectivityCheckError.Status, util2.NetworkConnectivityCheckError.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.NetworkConnectivityCheckError.Status, util2.NetworkConnectivityCheckError.Message, err.Error()))
 		return
 	}
 
 	util2.SShClient, err = util2.ConnectSsh()
 	if err != nil {
 		inLog.Errorf("SSH连接失败 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.SSHConnectError.Status, util2.SSHConnectError.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.SSHConnectError.Status, util2.SSHConnectError.Message, err.Error()))
 		return
 	}
 
@@ -49,7 +49,7 @@ func Login(c *gin.Context) {
 	err = util2.ConnectFtp()
 	if err != nil {
 		inLog.Errorf("SFTP连接失败 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.SFTPConnectError.Status, util2.SFTPConnectError.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.SFTPConnectError.Status, util2.SFTPConnectError.Message, err.Error()))
 		return
 	}
 
@@ -62,7 +62,7 @@ func QuickLogin(c *gin.Context) {
 	err := c.BindJSON(&util2.Attr)
 	if err != nil {
 		inLog.Errorf("登录信息解析异常 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.LoginInformationConversionError.Status, util2.LoginInformationConversionError.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.LoginInformationConversionError.Status, util2.LoginInformationConversionError.Message, err.Error()))
 		return
 	}
 	if util2.SShClient != nil {
@@ -73,14 +73,14 @@ func QuickLogin(c *gin.Context) {
 	err = util2.NetworkTest()
 	if err != nil {
 		inLog.Errorf("网络连通性检测失败 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.NetworkConnectivityCheckError.Status, util2.NetworkConnectivityCheckError.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.NetworkConnectivityCheckError.Status, util2.NetworkConnectivityCheckError.Message, err.Error()))
 		return
 	}
 
 	util2.SShClient, err = util2.ConnectSsh()
 	if err != nil {
 		inLog.Errorf("SSH连接失败 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.SSHConnectError.Status, util2.SSHConnectError.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.SSHConnectError.Status, util2.SSHConnectError.Message, err.Error()))
 		return
 	}
 
@@ -88,7 +88,7 @@ func QuickLogin(c *gin.Context) {
 	err = util2.ConnectFtp()
 	if err != nil {
 		inLog.Errorf("SFTP连接失败 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.SFTPConnectError.Status, util2.SFTPConnectError.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.SFTPConnectError.Status, util2.SFTPConnectError.Message, err.Error()))
 		return
 	}
 
@@ -100,7 +100,7 @@ func DownLoadDoc(c *gin.Context) {
 	value, _ := c.GetRawData()
 	file, err := os.ReadFile(string(value))
 	if err != nil {
-		c.JSON(http.StatusOK, util2.FailWithMsg(util2.MANUAL_DOWNLOAD_FAILED.Status, util2.MANUAL_DOWNLOAD_FAILED.Message))
+		c.JSON(http.StatusOK, util2.FailWithMsg(util2.ManualDownloadFailed.Status, util2.ManualDownloadFailed.Message))
 	}
 	c.JSON(http.StatusOK, util2.Success(base64.StdEncoding.EncodeToString(file)))
 }
@@ -110,27 +110,27 @@ func UploadFile(c *gin.Context) {
 	file, err := c.FormFile("files")
 	if err != nil {
 		inLog.Errorf("获取升级文件失败 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.UpdateFileGetError.Status, util2.UpdateFileGetError.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.UpdateFileGetError.Status, util2.UpdateFileGetError.Message, err.Error()))
 		return
 	}
 	// 处理文件名称
 	hashInName, err := util2.ParsePackageName(file.Filename)
 	if err != nil {
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.FileNameHashError.Status, util2.FileNameHashError.Message, err))
+		c.JSON(http.StatusOK, util2.Build(util2.FileNameHashError.Status, util2.FileNameHashError.Message, err))
 		return
 	}
 
 	open, err := file.Open()
 	if err != nil {
 		inLog.Errorf("升级文件读取失败 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.UpdateFileReadError.Status, util2.UpdateFileReadError.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.UpdateFileReadError.Status, util2.UpdateFileReadError.Message, err.Error()))
 		return
 	}
 
 	if len(hashInName) == 32 {
 		if !strings.EqualFold(util2.Md5Hash(open), hashInName) {
 			inLog.Errorf("升级文件异常 %+v", err)
-			c.JSON(http.StatusOK, util2.FailWithAll(util2.FileIntegrityVerificationError.Status, util2.FileIntegrityVerificationError.Message, err.Error()))
+			c.JSON(http.StatusOK, util2.Build(util2.FileIntegrityVerificationError.Status, util2.FileIntegrityVerificationError.Message, err.Error()))
 			return
 		}
 	}
@@ -138,7 +138,7 @@ func UploadFile(c *gin.Context) {
 		err = util2.Upload(open, file.Size)
 		if err != nil {
 			inLog.Errorf("上传升级文件失败 %+v", err)
-			c.JSON(http.StatusOK, util2.FailWithAll(util2.UploadUpdateFileError.Status, util2.UploadUpdateFileError.Message, err.Error()))
+			c.JSON(http.StatusOK, util2.Build(util2.UploadUpdateFileError.Status, util2.UploadUpdateFileError.Message, err.Error()))
 			return
 		}
 	}()
@@ -155,7 +155,7 @@ func UnPack(c *gin.Context) {
 	}
 	if err != nil {
 		inLog.Errorf("解压升级文件失败 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.UpdateFileUnPackError.Status, util2.UpdateFileUnPackError.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.UpdateFileUnPackError.Status, util2.UpdateFileUnPackError.Message, err.Error()))
 		return
 	}
 	c.JSON(http.StatusOK, util2.Success("OK"))
@@ -167,7 +167,7 @@ func ParsePackage(c *gin.Context) {
 	dir, err := util2.ReadRemoteDir(util2.PathLogo + util2.CurrentTime + "/" + "upgrade")
 	if err != nil {
 		inLog.Errorf("读取升级目录失败 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.ReadUpdateDirectoryError.Status, util2.ReadUpdateDirectoryError.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.ReadUpdateDirectoryError.Status, util2.ReadUpdateDirectoryError.Message, err.Error()))
 		return
 	}
 	for _, file := range dir {
@@ -197,8 +197,8 @@ var upGrader = websocket.Upgrader{
 	},
 }
 
-// Update 升级
-func Update(c *gin.Context) {
+// UpdateWs Update 升级
+func UpdateWs(c *gin.Context) {
 	if util2.WsConn != nil {
 		util2.WsConn.Close()
 		util2.WsConn = nil
@@ -226,9 +226,6 @@ func Update(c *gin.Context) {
 			inLog.Errorf("WebSocket接收数据异常 %+v", err)
 			//break
 		}
-		if strings.EqualFold(string(message), util2.UpdateStepStart) {
-			util2.Start()
-		}
 	}
 }
 
@@ -255,7 +252,7 @@ func ToRollBack(c *gin.Context) {
 	dir, err := util2.ReadRemoteDir(util2.PathLogo + util2.CurrentTime + "/" + "backup")
 	if err != nil {
 		inLog.Errorf("读取备份目录失败 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.ReadBackupDirectoryError.Status, util2.ReadBackupDirectoryError.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.ReadBackupDirectoryError.Status, util2.ReadBackupDirectoryError.Message, err.Error()))
 		return
 	}
 	backUpFolder := ""
@@ -267,7 +264,7 @@ func ToRollBack(c *gin.Context) {
 	err = util2.Rollback(backUpFolder)
 	if err != nil {
 		inLog.Errorf("回滚失败 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.RollBackError.Status, util2.RollBackError.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.RollBackError.Status, util2.RollBackError.Message, err.Error()))
 		return
 	}
 	c.JSON(http.StatusOK, util2.Success("OK"))
@@ -288,7 +285,7 @@ func QueryHistory(c *gin.Context) {
 	dir, err := util2.ReadRemoteDir(homePath)
 	if err != nil {
 		inLog.Errorf("进入用户根目录失败 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.ReadHomeDirectoryError.Status, util2.ReadHomeDirectoryError.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.ReadHomeDirectoryError.Status, util2.ReadHomeDirectoryError.Message, err.Error()))
 		return
 	}
 	// 遍历目录
@@ -332,7 +329,7 @@ func QueryDetail(c *gin.Context) {
 	dir, err := util2.ReadRemoteDir(folderName + "/" + "upgrade")
 	if err != nil {
 		inLog.Errorf("升级文件夹不存在 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.UpgradeFolderNotExist.Status, util2.UpgradeFolderNotExist.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.UpgradeFolderNotExist.Status, util2.UpgradeFolderNotExist.Message, err.Error()))
 		return
 	}
 	for _, file := range dir {
@@ -365,7 +362,7 @@ func DetailLog(c *gin.Context) {
 	dir, err := util2.ReadRemoteDir(folderName + "/" + "log")
 	if err != nil {
 		inLog.Errorf("日志文件夹不存在 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.LogFolderNotExist.Status, util2.LogFolderNotExist.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.LogFolderNotExist.Status, util2.LogFolderNotExist.Message, err.Error()))
 		return
 	}
 	// 日志名称排序
@@ -381,7 +378,7 @@ func DetailLog(c *gin.Context) {
 	file, err := util2.GetRemoteFile(folderName + "/log/" + latestFileName)
 	if err != nil {
 		inLog.Errorf("历史升级文件夹不存在 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.HistoryUpgradeFolderNotExist.Status, util2.HistoryUpgradeFolderNotExist.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.HistoryUpgradeFolderNotExist.Status, util2.HistoryUpgradeFolderNotExist.Message, err.Error()))
 		return
 	}
 	if latestFileName == "" {
@@ -393,19 +390,19 @@ func DetailLog(c *gin.Context) {
 	defer remoteLog.Close()
 	if err != nil {
 		inLog.Errorf("创建本地日志临时文件失败 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.CreateLocalLogFileError.Status, util2.CreateLocalLogFileError.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.CreateLocalLogFileError.Status, util2.CreateLocalLogFileError.Message, err.Error()))
 		return
 	}
 	_, err = file.WriteTo(remoteLog)
 	if err != nil {
 		inLog.Errorf("复制服务器日志到本地失败 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.CopyServerLog2localError.Status, util2.CopyServerLog2localError.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.CopyServerLog2localError.Status, util2.CopyServerLog2localError.Message, err.Error()))
 		return
 	}
 	readFile, err := os.ReadFile(remoteLogFile)
 	if err != nil {
 		inLog.Errorf("读取本地日志临时文件失败 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.ReadLocalLogTempFile.Status, util2.ReadLocalLogTempFile.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.ReadLocalLogTempFile.Status, util2.ReadLocalLogTempFile.Message, err.Error()))
 		return
 	}
 	c.JSON(http.StatusOK, util2.Success(string(readFile)))
@@ -425,7 +422,7 @@ func DrawerRollBack(c *gin.Context) {
 	dir, err := util2.ReadRemoteDir(folderName + "/backup/" + moduleName)
 	if err != nil {
 		inLog.Errorf("备份文件夹路径不存在 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.BackupFolderNotExist.Status, util2.BackupFolderNotExist.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.BackupFolderNotExist.Status, util2.BackupFolderNotExist.Message, err.Error()))
 		return
 	}
 
@@ -433,7 +430,7 @@ func DrawerRollBack(c *gin.Context) {
 	for _, file := range dir {
 		if file.Size() <= 0 {
 			inLog.Errorf("服务器备份文件夹内备份文件大小为0 %+v", err)
-			c.JSON(http.StatusOK, util2.FailWithAll(util2.BackupFileSizeIsZero.Status, util2.BackupFileSizeIsZero.Message, err.Error()))
+			c.JSON(http.StatusOK, util2.Build(util2.BackupFileSizeIsZero.Status, util2.BackupFileSizeIsZero.Message, err.Error()))
 			return
 		}
 	}
@@ -441,7 +438,7 @@ func DrawerRollBack(c *gin.Context) {
 	err = util2.RollbackSelf(folderName, moduleName)
 	if err != nil {
 		inLog.Errorf("自定义回滚失败 %+v", err)
-		c.JSON(http.StatusOK, util2.FailWithAll(util2.SelfRollBackError.Status, util2.SelfRollBackError.Message, err.Error()))
+		c.JSON(http.StatusOK, util2.Build(util2.SelfRollBackError.Status, util2.SelfRollBackError.Message, err.Error()))
 		return
 	}
 	c.JSON(http.StatusOK, util2.Success("OK"))
@@ -449,4 +446,30 @@ func DrawerRollBack(c *gin.Context) {
 func GetProgress(c *gin.Context) {
 	c.JSON(http.StatusOK, util2.ProgressW)
 	return
+}
+
+// Update 升级服务
+func Update(c *gin.Context) {
+	data, err := c.GetRawData()
+	if err != nil {
+		inLog.Errorf("升级数据解析失败 %+v", err)
+		c.JSON(http.StatusOK, util2.Build(util2.FailedParseUpgradeData.Status, util2.FailedParseUpgradeData.Message, err.Error()))
+		return
+	}
+	var tmpMap map[string]string
+	json.Unmarshal(data, &tmpMap)
+	index, err := strconv.Atoi(tmpMap["Index"])
+	if err != nil {
+		inLog.Errorf("升级数据解析失败 %+v", err)
+		c.JSON(http.StatusOK, util2.Build(util2.FailedParseUpgradeData.Status, util2.FailedParseUpgradeData.Message, err.Error()))
+		return
+	}
+	fileDetails := util2.FileDetails{
+		Index:       index,
+		Folder:      tmpMap["Folder"],
+		Name:        tmpMap["Name"],
+		Description: tmpMap["Description"],
+	}
+	returnMessage := util2.Start(fileDetails)
+	c.JSON(http.StatusOK, util2.Build(returnMessage.Status, returnMessage.Message, nil))
 }
