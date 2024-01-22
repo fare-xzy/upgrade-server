@@ -456,20 +456,8 @@ func Update(c *gin.Context) {
 		c.JSON(http.StatusOK, util2.Build(util2.FailedParseUpgradeData.Status, util2.FailedParseUpgradeData.Message, err.Error()))
 		return
 	}
-	var tmpMap map[string]string
-	json.Unmarshal(data, &tmpMap)
-	index, err := strconv.Atoi(tmpMap["Index"])
-	if err != nil {
-		inLog.Errorf("升级数据解析失败 %+v", err)
-		c.JSON(http.StatusOK, util2.Build(util2.FailedParseUpgradeData.Status, util2.FailedParseUpgradeData.Message, err.Error()))
-		return
-	}
-	fileDetails := util2.FileDetails{
-		Index:       index,
-		Folder:      tmpMap["Folder"],
-		Name:        tmpMap["Name"],
-		Description: tmpMap["Description"],
-	}
-	returnMessage := util2.Start(fileDetails)
+	var fileDetail util2.FileDetails
+	json.Unmarshal(data, &fileDetail)
+	returnMessage := util2.Start(fileDetail)
 	c.JSON(http.StatusOK, util2.Build(returnMessage.Status, returnMessage.Message, nil))
 }

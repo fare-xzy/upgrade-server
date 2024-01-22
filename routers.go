@@ -20,7 +20,7 @@ func init() {
 	router.POST("/upgrade/saveLog", SaveLog)
 	router.POST("/upgrade/rollBack", ToRollBack)
 	router.GET("/upgrade/getProgress", GetProgress)
-	router.GET("/upgrade/update", Update)
+	router.POST("/upgrade/update", Update)
 	// ws 通信
 	router.GET("/ws/update", UpdateWs)
 	// 升级历史记录页面
