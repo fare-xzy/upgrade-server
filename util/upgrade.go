@@ -315,31 +315,23 @@ func execute(cmd string) ([]byte, error) {
 }
 
 // Start 开始升级流程
-func Start() {
-	status := true
-	for _, fileDetail := range FDs {
-		WriteWsMsg("开始升级" + fileDetail.Name)
-		WriteWsMsg("startStep#" + fileDetail.Name)
-		err := Backup(fileDetail.Folder)
-		if err != nil {
-			status = false
-			inLog.Errorf("备份失败, %+v", err)
-			WriteWsErrorMsg(fmt.Sprintf("备份执行失败，错误码：%d，错误信息：%s", BackUpError.Status, BackUpError.Message))
-			break
-		}
-		WriteWsMsg("backupStep#" + fileDetail.Name)
-		err = Upgrade(fileDetail.Folder)
-		if err != nil {
-			status = false
-			inLog.Errorf("升级失败, %+v", err)
-			WriteWsErrorMsg(fmt.Sprintf("升级执行失败，错误码：%d，错误信息：%s", UpdateError.Status, UpdateError.Message))
-			break
-		}
-		WriteWsMsg("updateStep#" + fileDetail.Name)
+func Start(fileDetail FileDetails) ErrorCode {
+	WriteWsMsg("开始升级" + fileDetail.Name)
+	WriteWsMsg("backupStep#" + fileDetail.Name)
+	err := Backup(fileDetail.Folder)
+	if err != nil {
+		inLog.Errorf("备份失败, %+v", err)
+		WriteWsErrorMsg(fmt.Sprintf("备份执行失败，错误码：%d，错误信息：%s", BackUpError.Status, BackUpError.Message))
+		return BackUpError
 	}
-	if status {
-		WriteWsMsg("endStep")
+	WriteWsMsg("updateStep#" + fileDetail.Name)
+	err = Upgrade(fileDetail.Folder)
+	if err != nil {
+		inLog.Errorf("升级失败, %+v", err)
+		WriteWsErrorMsg(fmt.Sprintf("升级执行失败，错误码：%d，错误信息：%s", UpdateError.Status, UpdateError.Message))
+		return UpdateError
 	}
+	return SuccessCode
 }
 
 func WriteWsMsg(msg string) {

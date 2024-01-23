@@ -32,7 +32,7 @@ func FailWithMsg(code int, message string) *Result {
 	}
 }
 
-func FailWithAll(code int, message string, data any) *Result {
+func Build(code int, message string, data any) *Result {
 	return &Result{
 		Code:    code,
 		Message: message,

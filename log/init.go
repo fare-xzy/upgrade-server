@@ -15,8 +15,10 @@ var (
 	logLevel  = "debug"
 )
 
-func init() {
-
+func Init(logPath string) {
+	if logPath != "" {
+		logFolder = logPath
+	}
 	// log level
 	switch logLevel {
 	case "debug":
