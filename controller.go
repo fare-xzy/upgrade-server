@@ -243,6 +243,20 @@ func SaveLog(c *gin.Context) {
 	}
 }
 
+func DrawerSaveLog(c *gin.Context) {
+	value, _ := c.GetRawData()
+	var tmp map[string]string
+	json.Unmarshal(value, &tmp)
+	folderName := tmp["folderName"]
+	filePath := folderName + "/" + "log"
+	fileName := time.Now().Format("20060102150405") + ".log"
+	err := util2.UploadSelf(filePath, []byte(tmp["log"]), fileName)
+	if err != nil {
+		inLog.Errorf("Error %+v", err)
+		fmt.Println(err)
+	}
+}
+
 // ToRollBack 回滚操作
 func ToRollBack(c *gin.Context) {
 	value, _ := c.GetRawData()
@@ -385,7 +399,7 @@ func DetailLog(c *gin.Context) {
 		c.JSON(http.StatusOK, util2.Success(""))
 		return
 	}
-	remoteLogFile := filepath.Join(util2.LocalTempPath, "initial-upgrade", "remote", latestFileName)
+	remoteLogFile := filepath.Join(inLog.LogFolder, "remote", latestFileName)
 	remoteLog, err := os.Create(remoteLogFile)
 	defer remoteLog.Close()
 	if err != nil {

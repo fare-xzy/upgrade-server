@@ -28,6 +28,7 @@ func init() {
 	router.POST("/history/queryDetail", QueryDetail)
 	router.POST("/history/detailLog", DetailLog)
 	router.POST("/history/drawerRollBack", DrawerRollBack)
+	router.POST("/history/drawerSaveLog", DrawerSaveLog)
 }
 
 // InitHandler 初始化配置

@@ -10,14 +10,14 @@ import (
 var logger zerolog.Logger
 
 var (
-	logFolder = filepath.Join(os.TempDir(), "initial-upgrade")
+	LogFolder = filepath.Join(os.TempDir(), "initial-upgrade")
 	logFile   = "initial-upgrade.log"
 	logLevel  = "debug"
 )
 
 func Init(logPath string) {
 	if logPath != "" {
-		logFolder = logPath
+		LogFolder = logPath
 	}
 	// log level
 	switch logLevel {
@@ -30,18 +30,18 @@ func Init(logPath string) {
 	default:
 		panic(fmt.Sprintf("unknown log level: %s", "debug"))
 	}
-	_, err := os.Stat(logFolder)
+	_, err := os.Stat(LogFolder)
 	if err != nil {
-		os.Mkdir(logFolder, 0666)
+		os.Mkdir(LogFolder, 0666)
 	}
-	remoteLogPath := filepath.Join(logFolder, "remote")
+	remoteLogPath := filepath.Join(LogFolder, "remote")
 	_, err = os.Stat(remoteLogPath)
 	if err != nil {
 		os.Mkdir(remoteLogPath, 0666)
 	}
 	// log file
 	consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: "2006-01-02 15:04:05"}
-	fileWriter, err := os.OpenFile(filepath.Join(logFolder, logFile), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+	fileWriter, err := os.OpenFile(filepath.Join(LogFolder, logFile), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		panic(fmt.Sprintf("open log file failed: %s", err))
 	}
