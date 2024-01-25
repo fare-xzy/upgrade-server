@@ -399,7 +399,7 @@ func DetailLog(c *gin.Context) {
 		c.JSON(http.StatusOK, util2.Success(""))
 		return
 	}
-	remoteLogFile := filepath.Join(util2.LocalTempPath, "initial-upgrade", "remote", latestFileName)
+	remoteLogFile := filepath.Join(inLog.LogFolder, "remote", latestFileName)
 	remoteLog, err := os.Create(remoteLogFile)
 	defer remoteLog.Close()
 	if err != nil {

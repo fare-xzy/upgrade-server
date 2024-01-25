@@ -1,9 +1,5 @@
 package util
 
-import (
-	"os"
-)
-
 type Charset string
 
 const (
@@ -63,8 +59,4 @@ var (
 const (
 	UpdateStepStart = "start"
 	PathLogo        = "initial-upgrade-"
-)
-
-var (
-	LocalTempPath = os.TempDir() // 获取当前操作系统temp目录临时存储升级工具日志
 )
