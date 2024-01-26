@@ -1,0 +1,34 @@
+[[servers]]
+name="管理平台"
+value="web"
+paths=[
+    "/opt/app/AnysignWeb/config/sysConfig.properties",
+    "/opt/app/AnysignWeb/config/application.yaml"
+]
+command="supervisor restart web"
+[[servers]]
+name="接入服务"
+value="service"
+paths=[
+    "/opt/app/AnysignServerService/config/sysConfig.properties",
+    "/opt/app/AnysignServerService/config/application.yaml"
+]
+command="supervisor restart service"
+
+[[servers]]
+name="签名服务"
+value="sign"
+paths=[
+    "/opt/app/AnysignServerSign/config/sysConfig.properties",
+    "/opt/app/AnysignServerSign/config/application.yaml"
+]
+command="supervisor restart sign"
+[[servers]]
+name="密码客户端服务"
+value="cipher"
+paths=[
+    "/opt/app/cipher-service-server/config/application-dev.properties",
+    "/opt/app/cipher-service-server/config/SVSClient.properties"
+]
+command="supervisor restart cipher"
+
