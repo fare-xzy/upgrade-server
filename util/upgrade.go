@@ -200,7 +200,7 @@ func UploadSelf(path string, file []byte, fileName string) error {
 
 func Unzip() error {
 	// 解压文件
-	combo, err := execute(fmt.Sprintf("unzip ~/%s/%s -d %s", PathLogo+CurrentTime, CurrentTime+".zip", PathLogo+CurrentTime))
+	combo, err := Execute(fmt.Sprintf("unzip ~/%s/%s -d %s", PathLogo+CurrentTime, CurrentTime+".zip", PathLogo+CurrentTime))
 	if err != nil {
 		return err
 	}
@@ -210,7 +210,7 @@ func Unzip() error {
 
 func UnGz() error {
 	// 解压文件
-	combo, err := execute(fmt.Sprintf("tar -zxPvf ~/%s/%s -C %s", PathLogo+CurrentTime, CurrentTime+".tar.gz", PathLogo+CurrentTime))
+	combo, err := Execute(fmt.Sprintf("tar -zxPvf ~/%s/%s -C %s", PathLogo+CurrentTime, CurrentTime+".tar.gz", PathLogo+CurrentTime))
 	if err != nil {
 		return err
 	}
@@ -219,14 +219,14 @@ func UnGz() error {
 }
 func Backup(folder string) error {
 	// 执行备份脚本
-	combo, err := execute(fmt.Sprintf("find ~/%s/upgrade/%s/backup.sh -type f | wc -l", PathLogo+CurrentTime, folder))
+	combo, err := Execute(fmt.Sprintf("find ~/%s/upgrade/%s/backup.sh -type f | wc -l", PathLogo+CurrentTime, folder))
 	WriteWsMsg("检查备份脚本")
 	if strings.EqualFold(strings.TrimSpace(string(combo)), "1") {
 		WriteWsMsg("备份脚本存在，执行备份脚本")
 		if Attr.QuickHost != "" {
-			combo, err = execute(fmt.Sprintf("echo '%s' | sudo -S sh ~/%s/upgrade/%s/backup.sh ~/%s/%s/%s/", Attr.Password, PathLogo+CurrentTime, folder, PathLogo+CurrentTime, "backup", folder))
+			combo, err = Execute(fmt.Sprintf("echo '%s' | sudo -S sh ~/%s/upgrade/%s/backup.sh ~/%s/%s/%s/", Attr.Password, PathLogo+CurrentTime, folder, PathLogo+CurrentTime, "backup", folder))
 		} else {
-			combo, err = execute(fmt.Sprintf("sh ~/%s/upgrade/%s/backup.sh ~/%s/%s/%s/", PathLogo+CurrentTime, folder, PathLogo+CurrentTime, "backup", folder))
+			combo, err = Execute(fmt.Sprintf("sh ~/%s/upgrade/%s/backup.sh ~/%s/%s/%s/", PathLogo+CurrentTime, folder, PathLogo+CurrentTime, "backup", folder))
 		}
 		WriteWsMsg("备份命令输出:" + string(combo))
 		if err != nil {
@@ -244,9 +244,9 @@ func Upgrade(folder string) error {
 	var combo []byte
 	var err error
 	if Attr.QuickHost != "" {
-		combo, err = execute(fmt.Sprintf("echo '%s' | sudo -S sh ~/%s/upgrade/%s/update.sh %s", Attr.Password, PathLogo+CurrentTime, folder, "~/"+CurrentTime+"/upgrade"))
+		combo, err = Execute(fmt.Sprintf("echo '%s' | sudo -S sh ~/%s/upgrade/%s/update.sh %s", Attr.Password, PathLogo+CurrentTime, folder, "~/"+CurrentTime+"/upgrade"))
 	} else {
-		combo, err = execute(fmt.Sprintf("sh ~/%s/upgrade/%s/update.sh %s", PathLogo+CurrentTime, folder, "~/"+CurrentTime+"/upgrade"))
+		combo, err = Execute(fmt.Sprintf("sh ~/%s/upgrade/%s/update.sh %s", PathLogo+CurrentTime, folder, "~/"+CurrentTime+"/upgrade"))
 	}
 
 	WriteWsMsg("升级命令输出:" + string(combo))
@@ -255,14 +255,14 @@ func Upgrade(folder string) error {
 
 func Rollback(folder string) error {
 	// 执行回滚脚本
-	combo, err := execute(fmt.Sprintf("find ~/%s/upgrade/%s/recover.sh -type f | wc -l", PathLogo+CurrentTime, folder))
+	combo, err := Execute(fmt.Sprintf("find ~/%s/upgrade/%s/recover.sh -type f | wc -l", PathLogo+CurrentTime, folder))
 	WriteWsMsg("检查回滚脚本")
 	if strings.EqualFold(strings.TrimSpace(string(combo)), "1") {
 		WriteWsMsg("执行回滚脚本")
 		if Attr.QuickHost != "" {
-			combo, err = execute(fmt.Sprintf("echo '%s' | sudo -S sh ~/%s/upgrade/%s/recover.sh %s/%s/%s/", Attr.Password, PathLogo+CurrentTime, folder, PathLogo+CurrentTime, "backup", folder))
+			combo, err = Execute(fmt.Sprintf("echo '%s' | sudo -S sh ~/%s/upgrade/%s/recover.sh %s/%s/%s/", Attr.Password, PathLogo+CurrentTime, folder, PathLogo+CurrentTime, "backup", folder))
 		} else {
-			combo, err = execute(fmt.Sprintf("sh ~/%s/upgrade/%s/recover.sh %s/%s/%s/", PathLogo+CurrentTime, folder, PathLogo+CurrentTime, "backup", folder))
+			combo, err = Execute(fmt.Sprintf("sh ~/%s/upgrade/%s/recover.sh %s/%s/%s/", PathLogo+CurrentTime, folder, PathLogo+CurrentTime, "backup", folder))
 		}
 		WriteWsMsg("回滚命令输出:" + string(combo))
 		if err != nil {
@@ -276,15 +276,15 @@ func Rollback(folder string) error {
 
 func RollbackSelf(folderName, moudleName string) error {
 	// 执行回滚脚本
-	combo, err := execute(fmt.Sprintf("find ~/%s/upgrade/%s/recover.sh -type f | wc -l", folderName, moudleName))
+	combo, err := Execute(fmt.Sprintf("find ~/%s/upgrade/%s/recover.sh -type f | wc -l", folderName, moudleName))
 	WriteWsMsg("检查回滚脚本")
 	if strings.EqualFold(strings.TrimSpace(string(combo)), "1") {
 		WriteWsMsg("执行回滚脚本")
 		if Attr.QuickHost != "" {
 			str := fmt.Sprintf("echo '%s' | sudo -S sh ~/%s/upgrade/%s/recover.sh %s/backup/%s/", Attr.Password, folderName, moudleName, folderName, moudleName)
-			combo, err = execute(str)
+			combo, err = Execute(str)
 		} else {
-			combo, err = execute(fmt.Sprintf("sh ~/%s/upgrade/%s/recover.sh %s/backup/%s/", folderName, moudleName, folderName, moudleName))
+			combo, err = Execute(fmt.Sprintf("sh ~/%s/upgrade/%s/recover.sh %s/backup/%s/", folderName, moudleName, folderName, moudleName))
 		}
 		WriteWsMsg("回滚命令输出:" + string(combo))
 		if err != nil {
@@ -307,7 +307,7 @@ func GetRemoteFile(path string) (*sftp.File, error) {
 }
 
 // 远程执行并返回执行结果
-func execute(cmd string) ([]byte, error) {
+func Execute(cmd string) ([]byte, error) {
 	session, _ := SShClient.NewSession()
 	defer session.Close()
 	combo, err := session.CombinedOutput(cmd)

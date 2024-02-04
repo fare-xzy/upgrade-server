@@ -32,7 +32,7 @@ func init() {
 	router.POST("/history/drawerSaveLog", controller.DrawerSaveLog)
 	// 配置文件页面
 	router.GET("/props/getPropsConf", controller.GetPropsConf)
-	router.GET("/props/getPropsContent", controller.GetPropsContent)
+	router.POST("/props/getPropsContent", controller.GetPropsContent)
 	router.POST("/props/savePropsContent", controller.SavePropsContent)
 
 }

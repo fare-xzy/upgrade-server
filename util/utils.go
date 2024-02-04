@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
+	"unicode/utf16"
 )
 
 func GetWorkPath() string {
@@ -79,4 +81,17 @@ func Contains(a []string, x string) bool {
 		}
 	}
 	return false
+}
+
+func U16StrToUTF8Str(u16Str string) (string, error) {
+	reg := regexp.MustCompile(`\\u([0-9a-fA-F]{4})`)
+	s := reg.ReplaceAllStringFunc(u16Str, func(s string) string {
+		s = s[2:] // strip \\u
+		u16, err := strconv.ParseUint(s, 16, 16)
+		if err != nil {
+			return ""
+		}
+		return string(utf16.Decode([]uint16{uint16(u16)}))
+	})
+	return s, nil
 }

@@ -57,6 +57,5 @@ var (
 )
 
 const (
-	UpdateStepStart = "start"
-	PathLogo        = "initial-upgrade-"
+	PathLogo = "initial-upgrade-"
 )

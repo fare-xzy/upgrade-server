@@ -9,6 +9,10 @@
 >
 > go get -u github.com/rs/zerolog
 > 
+> go get -u gopkg.in/yaml.v3
+> 
+> go get -u github.com/magiconair/properties
+> 
 > go env -w GOPROXY=https://goproxy.cn,direct
 
 ### 打包
