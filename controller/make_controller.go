@@ -116,23 +116,26 @@ func MakePackage(c *gin.Context) {
 		makeRecover(stepPath, p)
 	}
 	util.ZipFile(path.Join(bean.RunPath, "data", makeCurrentTime), path.Join(bean.RunPath, "data", makeCurrentTime+".zip"))
+	finalPath := path.Join(bean.RunPath, "data", makeCurrentTime+".zip")
 	if root.IsAdmin == "1" {
-		open, err := os.Open(path.Join(bean.RunPath, "data", makeCurrentTime+".zip"))
+		open, err := os.Open(finalPath)
 		if err != nil {
 			return
 		}
 		defer open.Close()
-
-		hash := util.Md5Hash(open)
-		finalName := makeCurrentTime + "_" + hash + ".zip"
-		file, err := os.Create(path.Join(bean.RunPath, "data", finalName))
-		defer file.Close()
+		allByte, err := io.ReadAll(open)
 		if err != nil {
 			return
 		}
-		io.Copy(open, file)
-
+		hash := util.Md5HashByByte(allByte)
+		finalName := makeCurrentTime + "_" + hash + ".zip"
+		finalPath = path.Join(bean.RunPath, "data", finalName)
+		destFile, err := os.Create(finalPath)
+		defer destFile.Close()
+		destFile.Write(allByte)
 	}
+	c.JSON(http.StatusOK, util.Success(finalPath))
+
 }
 
 // 创建Init文件
@@ -169,6 +172,9 @@ fi
 	} else {
 		if p.Backup.Active {
 			backUpShell.WriteString(p.Backup.Shell)
+		} else {
+			backUpShell.WriteString(ShellHeader)
+			backUpShell.WriteString(`echo -e "无备份脚本跳过备份"`)
 		}
 	}
 	backUpFilePath := path.Join(folder, "backup.sh")
@@ -205,7 +211,12 @@ func makeUpdate(folder string, p bean.Package) {
 		updateShell.WriteString(fmt.Sprintf(`echo -e "%s升级完成"
 `, p.Desc))
 	} else {
-
+		if p.Backup.Active {
+			updateShell.WriteString(p.Update.Shell)
+		} else {
+			updateShell.WriteString(ShellHeader)
+			updateShell.WriteString(`echo -e "无升级脚本跳过升级"`)
+		}
 	}
 	updateFilePath := path.Join(folder, "update.sh")
 	create, err := os.Create(updateFilePath)
@@ -246,7 +257,12 @@ fi
 		recoverShell.WriteString(fmt.Sprintf(`echo -e "%s回滚完成"
 `, p.Desc))
 	} else {
-
+		if p.Backup.Active {
+			recoverShell.WriteString(p.Rollback.Shell)
+		} else {
+			recoverShell.WriteString(ShellHeader)
+			recoverShell.WriteString(`echo -e "无回滚脚本跳过回滚"`)
+		}
 	}
 	recoverFilePath := path.Join(folder, "recover.sh")
 	create, err := os.Create(recoverFilePath)

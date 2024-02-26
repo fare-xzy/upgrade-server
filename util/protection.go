@@ -30,3 +30,17 @@ func Md5Hash(origin multipart.File) string {
 
 	return hex.EncodeToString(md5Sum)
 }
+
+func Md5HashByByte(origin []byte) string {
+
+	// 合并数据和盐值
+	dataWithSalt := append(origin, salt...)
+	// 创建MD5哈希器
+	hasher := md5.New()
+
+	// 将字符串转换为字节数组并计算哈希值
+	hasher.Write(dataWithSalt)
+	sum := hasher.Sum(nil)
+
+	return hex.EncodeToString(sum)
+}
