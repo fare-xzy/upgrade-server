@@ -15,9 +15,9 @@ var (
 	logLevel  = "debug"
 )
 
-func Init(logPath string) {
-	if logPath != "" {
-		LogFolder = logPath
+func Init(runPath string) {
+	if runPath != "" {
+		LogFolder = filepath.Join(runPath, "logs")
 	}
 	// log level
 	switch logLevel {

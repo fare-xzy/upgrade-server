@@ -5,7 +5,6 @@ import (
 	"archive/zip"
 	"compress/gzip"
 	"io"
-	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -100,7 +99,7 @@ func UnGzipFile(srcFilePath, destDirPath string) error {
 
 // ZIP压缩
 func ZipFile(srcDirPath, destFilePath string) error {
-	dir, err := ioutil.ReadDir(srcDirPath)
+	dir, err := os.ReadDir(srcDirPath)
 	if err != nil {
 		return err
 	}
@@ -119,17 +118,18 @@ func ZipFile(srcDirPath, destFilePath string) error {
 	defer archive.Close()
 
 	// 遍历路径信息
-	filepath.Walk(srcDirPath, func(path string, info os.FileInfo, _ error) error {
+	filepath.Walk(srcDirPath, func(filePath string, info os.FileInfo, _ error) error {
 
 		// 如果是源路径，提前进行下一个遍历
-		if path == srcDirPath {
+		if filePath == srcDirPath {
 			return nil
 		}
 
 		// 获取：文件头信息
 		header, _ := zip.FileInfoHeader(info)
-
-		header.Name = strings.TrimPrefix(path, srcDirPath+`\`)
+		filePath = strings.ReplaceAll(filePath, "\\", "/")
+		srcDirPath = strings.ReplaceAll(srcDirPath, "\\", "/")
+		header.Name = strings.TrimPrefix(path.Join(filePath), path.Join(srcDirPath))
 
 		// 判断：文件是不是文件夹
 		if info.IsDir() {
@@ -138,11 +138,10 @@ func ZipFile(srcDirPath, destFilePath string) error {
 			// 设置：zip的文件压缩算法
 			header.Method = zip.Deflate
 		}
-
 		// 创建：压缩包头部信息
 		writer, _ := archive.CreateHeader(header)
 		if !info.IsDir() {
-			file, _ := os.Open(path)
+			file, _ := os.Open(filePath)
 			defer file.Close()
 			io.Copy(writer, file)
 		}

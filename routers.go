@@ -34,6 +34,9 @@ func init() {
 	router.GET("/props/getPropsConf", controller.GetPropsConf)
 	router.POST("/props/getPropsContent", controller.GetPropsContent)
 	router.POST("/props/savePropsContent", controller.SavePropsContent)
+	// 制作升级包页面
+	router.POST("/make/makePackage", controller.MakePackage)
+	router.POST("/make/uploadPackages", controller.UploadPackages)
 
 }
 

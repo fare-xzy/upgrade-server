@@ -18,6 +18,7 @@ type server struct {
 
 var (
 	GlobalConfig sysConfig
+	RunPath      string
 )
 
 func init() {
