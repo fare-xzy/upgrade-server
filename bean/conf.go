@@ -1,10 +1,5 @@
 package bean
 
-import (
-	"github.com/BurntSushi/toml"
-	"os"
-)
-
 type sysConfig struct {
 	Servers []server `toml:"servers"`
 }
@@ -22,11 +17,11 @@ var (
 )
 
 func init() {
-	_, _ = toml.DecodeFile("properties.toml", &GlobalConfig)
-
-	// 获取可执行文件的路径
-	_, err := os.Executable()
-	if err != nil {
-		panic(err)
-	}
+	//_, _ = toml.DecodeFile("properties.toml", &GlobalConfig)
+	//
+	//// 获取可执行文件的路径
+	//_, err := os.Executable()
+	//if err != nil {
+	//	panic(err)
+	//}
 }
