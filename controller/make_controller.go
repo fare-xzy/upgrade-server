@@ -30,7 +30,10 @@ BASE_PATH=$(
 `
 )
 
-var makeCurrentTime string
+var (
+	makeCurrentTime string
+	isAdmin         string
+)
 
 // UploadPackages 上传文件
 func UploadPackages(c *gin.Context) {
@@ -74,6 +77,7 @@ func MakePackage(c *gin.Context) {
 	if err != nil {
 		return
 	}
+	isAdmin = root.IsAdmin
 	packagePath := path.Join(bean.RunPath, "data", makeCurrentTime, "upgrade")
 
 	err = os.MkdirAll(packagePath, util.AllMode)
@@ -117,7 +121,7 @@ func MakePackage(c *gin.Context) {
 	}
 	util.ZipFile(path.Join(bean.RunPath, "data", makeCurrentTime), path.Join(bean.RunPath, "data", makeCurrentTime+".zip"))
 	finalPath := path.Join(bean.RunPath, "data", makeCurrentTime+".zip")
-	if root.IsAdmin == "1" {
+	if isAdmin == "1" {
 		open, err := os.Open(finalPath)
 		if err != nil {
 			return
@@ -203,8 +207,10 @@ func makeUpdate(folder string, p bean.Package) {
 `, iv.Value))
 			updateShell.WriteString(fmt.Sprintf(`cp -rf $BASE_PATH/%s %s
 `, filepath.Base(iv.Value), iv.Value))
-			updateShell.WriteString(fmt.Sprintf(`chown -R app:app %s
+			if isAdmin != "3" {
+				updateShell.WriteString(fmt.Sprintf(`chown -R app:app %s
 `, iv.Value))
+			}
 			updateShell.WriteString(fmt.Sprintf(`echo -e "%s升级完成"
 `, filepath.Base(iv.Value)))
 		}
@@ -249,8 +255,10 @@ fi
 `, iv.Value))
 			recoverShell.WriteString(fmt.Sprintf(`cp -rf $1'%s' %s
 `, filepath.Base(iv.Value), iv.Value))
-			recoverShell.WriteString(fmt.Sprintf(`chown -R app:app %s
+			if isAdmin != "3" {
+				recoverShell.WriteString(fmt.Sprintf(`chown -R app:app %s
 `, iv.Value))
+			}
 			recoverShell.WriteString(fmt.Sprintf(`echo -e "%s回滚完成"
 `, filepath.Base(iv.Value)))
 		}
